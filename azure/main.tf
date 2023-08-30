@@ -39,7 +39,7 @@ resource "azurerm_network_security_group" "mvd_network_security_group" {
 
   security_rule {
     name                       = "SSH"
-    priority                   = 1001
+    priority                   = 101
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -49,41 +49,15 @@ resource "azurerm_network_security_group" "mvd_network_security_group" {
     destination_address_prefix = "*"
   }
 
-  # Data Dashboard for first Connector
+  # Data Dashboard for Connectors
   security_rule {
-    name                       = "FirstDataDashboard"
-    priority                   = 1002
+    name                       = "DataDashboard"
+    priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "7080"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  # Data Dashboard for second Connector
-  security_rule {
-    name                       = "SecondDataDashboard"
-    priority                   = 1003
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "7081"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  # Data Dashboard for third Connector
-  security_rule {
-    name                       = "ThirdDataDashboard"
-    priority                   = 1004
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "7082"
+    destination_port_ranges    = ["7080", "7081", "7082"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -106,6 +80,12 @@ resource "azurerm_network_interface" "mvd_network_interface" {
 # Connect the Security Group to the Network Interface
 resource "azurerm_network_interface_security_group_association" "mvd_secruity_group_network_interface" {
   network_interface_id      = azurerm_network_interface.mvd_network_interface.id
+  network_security_group_id = azurerm_network_security_group.mvd_network_security_group.id
+}
+
+# Connect the Security Group to the Subnetwork Interface
+resource "azurerm_subnet_network_security_group_association" "mvd_secruity_group_subnetwork_interface" {
+  subnet_id                 = azurerm_subnet.mvd_terraform_subnet.id
   network_security_group_id = azurerm_network_security_group.mvd_network_security_group.id
 }
 
