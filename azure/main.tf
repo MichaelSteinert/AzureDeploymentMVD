@@ -28,7 +28,7 @@ resource "azurerm_public_ip" "mvd_public_ip" {
   name                = "mvdPublicIP"
   location            = azurerm_resource_group.mvd_ressource_group.location
   resource_group_name = azurerm_resource_group.mvd_ressource_group.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
 }
 
 # Create Network Security Group and Rule
@@ -39,7 +39,7 @@ resource "azurerm_network_security_group" "mvd_network_security_group" {
 
   security_rule {
     name                       = "SSH"
-    priority                   = 101
+    priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -49,15 +49,28 @@ resource "azurerm_network_security_group" "mvd_network_security_group" {
     destination_address_prefix = "*"
   }
 
-  # Data Dashboard for Connectors
+  # Open Ports for Data Dashboards
   security_rule {
-    name                       = "DataDashboard"
-    priority                   = 100
+    name                       = "DataDashboards"
+    priority                   = 101
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_ranges    = ["7080", "7081", "7082"]
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  # Open Ports for Connectors
+  security_rule {
+    name                       = "Connectors"
+    priority                   = 102
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = ["9191", "9192", "9193"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }

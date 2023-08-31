@@ -36,17 +36,32 @@ chmod 600 id_rsa.pem
 - Connect to VM as User `mvdadmin` by using Private Key.
 
 ```bash
-ssh -i ~/.ssh/id_rsa.pem mvdadmin@20.218.249.77
+ssh -i ~/.ssh/azure/id_rsa.pem mvdadmin@20.170.12.156
 ```
 
-## Install Java and Docker
-
 ## Run Build Minimum Viable Dataspace (MVD)
+
+- The Prerequisite is that Java 17, Docker and Docker Compose are installed
 
 ```bash
 ./gradlew build -x test
 ./gradlew -DuseFsVault="true" :launchers:connector:shadowJar
 ./gradlew -DuseFsVault="true" :launchers:registrationservice:shadowJar
+```
+
+## Adjust URLs in Data Dashboard
+
+- The Configuration `src/assets/config/app.config.json` needs to be updated with the current IP Address of the VM
+
+```json
+{
+  "apiKey": "ApiKeyDefaultValue",
+  "managementApiUrl": "http://20.170.12.156:9192/api/v1/data",
+  "catalogUrl": "http://20.170.12.156:9191/api/v1/data/",
+  "storageAccount": "company2assets",
+  "storageExplorerLinkTemplate": "storageexplorer://v=1",
+  "theme": "theme-2"
+}
 ```
 
 ## Run MVD
