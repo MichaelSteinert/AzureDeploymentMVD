@@ -74,3 +74,11 @@ sudo docker compose --profile ui -f docker-compose.yml up --build
 
 - When the following Error is displayed: `failed to solve: failed to read dockerfile: open /var/lib/docker/tmp/buildkit-mount123456789/Dockerfile: no such file or directory`, then the Setting of the `MVD_UI_PATH` Variable does not work
 - The Solution is to set the UI Path manually to `../../DataDashboard` in the `docker-compose` File
+
+## Create Asset via Azure CLI
+
+```bash
+conn_str="DefaultEndpointsProtocol=http;AccountName=company1assets;AccountKey=key1;BlobEndpoint=http://127.0.0.1:10000/company1assets;"
+az storage container create --name src-container --connection-string $conn_str
+az storage blob upload -f ./deployment/azure/terraform/modules/participant/sample-data/text-document.txt --container-name src-container --name text-document.txt --connection-string $conn_str
+```
